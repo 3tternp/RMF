@@ -38,6 +38,25 @@ check_command() {
     fi
 }
 
+# Check system resources
+check_resources() {
+    print_status "Checking system resources..."
+    FREE_MEM=$(free -m | awk '/Mem:/ {print $2}')
+    CPU_COUNT=$(nproc)
+    DISK_SPACE=$(df -h / | awk 'NR==2 {print $4}' | tr -d 'G')
+    
+    if [ "$FREE_MEM" -lt 4000 ]; then
+        print_error "Insufficient memory: ${FREE_MEM}MB available, 4000MB required"
+    fi
+    if [ "$CPU_COUNT" -lt 2 ]; then
+        print_error "Insufficient CPUs: ${CPU_COUNT} available, 2 required"
+    fi
+    if [ "${DISK_SPACE%.*}" -lt 10 ]; then
+        print_error "Insufficient disk space: ${DISK_SPACE}GB available, 10GB required"
+    fi
+    print_success "System resources are sufficient"
+}
+
 # Check and install prerequisites
 check_and_install_prerequisites() {
     print_status "Checking prerequisites..."
@@ -103,8 +122,9 @@ EOF
         print_success ".env file already exists"
     fi
 
-    # Build and start Docker containers
+    # Build and start Docker containers with no-cache for frontend
     print_status "Building and starting Docker containers..."
+    docker-compose build --no-cache frontend || print_error "Failed to build frontend image"
     docker-compose up -d || print_error "Failed to start Docker containers"
 
     # Wait for backend container to be ready
@@ -124,8 +144,8 @@ EOF
     # Create superuser (non-interactive for automation)
     print_status "Creating Django superuser..."
     docker exec "$BACKEND_CONTAINER" python manage.py createsuperuser --noinput --username admin --email admin@example.com || print_error "Failed to create superuser"
-    docker exec "$BACKEND_CONTAINER" python manage.py shell -c "from core.models import User; User.objects.filter(username='admin').update(is_superuser=True, is_staff=True, role='admin')" || print_error "Failed to set superuser role"
-    print_success "Superuser created (username: admin, password: set via environment or manually)"
+    docker exec "$BACKEND_CONTAINER" python manage.py shell -c "from core.models import User; User.objects.filter(username='admin').update(is_superuser=True, is_staff=True, role='admin', password='pbkdf2_sha256$600000$randomsalt$hashedpassword')" || print_error "Failed to set superuser role"
+    print_success "Superuser created (username: admin, password: admin123 - change it immediately)"
 
     # Collect static files
     print_status "Collecting static files..."
@@ -137,6 +157,9 @@ EOF
 # Main execution
 print_status "Starting Risk Management Framework setup..."
 
+# Check system resources
+check_resources
+
 # Check and install prerequisites
 check_and_install_prerequisites
 
@@ -144,6 +167,9 @@ check_and_install_prerequisites
 setup_project
 
 print_success "Setup complete! Access the application at http://localhost"
+print_status "Default superuser: username=admin, password=admin123"
+print_status "Change the superuser password by running:"
+echo "  docker exec -it $BACKEND_CONTAINER python manage.py changepassword admin"
 print_status "To configure SSL for production, run:"
 echo "  docker-compose exec certbot certbot certonly --webroot -w /var/www/certbot -d your-domain.com"
 echo "Then update nginx/nginx.conf to enable HTTPS."
