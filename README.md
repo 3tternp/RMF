@@ -3,25 +3,25 @@ Risk Management Framework
 
 A web-based Risk Management Framework built with Django, Django REST Framework (DRF), React, and Docker, aligned with NIST 800-53 standards. The application supports Role-Based Access Control (RBAC), risk registration, NIST 800-53 control catalog management, audit logging, and dashboard analytics, secured with Nginx and Let's Encrypt SSL.
 
-Table of Contents
+**Table of Contents**
 
-Features
+1. Features
 
-Tech Stack
+2. Tech Stack
 
-Project Structure
+3. Project Structure
 
-Prerequisites
+4. Prerequisites
 
-Setup Instruction
+5. Setup Instruction
 
-Usage
+6. Usage
 
-Contributing
+7. Contributing
 
-License
+8. License
 
-Features
+9. Features
 
 Risk Register: Manage risks with categories, likelihood, impact, and ownership.
 
