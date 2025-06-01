@@ -47,38 +47,6 @@ Authentication: Django RBAC with custom user roles
 
 Database: PostgreSQL 17
 
-Project Structure
-
-your-project-root/
-├── backend/                  # Django + DRF + RBAC + Risk Modules
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── manage.py
-│   ├── config/               # Django project settings
-│   ├── core/                 # User, Role, Auth
-│   ├── risk/                 # Risk register
-│   ├── control/              # NIST 800-53 control catalog
-│   ├── audit/                # Audit & incident module
-│   ├── dashboards/           # Dashboard APIs
-│   └── static/               # Static files
-├── frontend/                 # React App
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── package.json
-│   ├── public/
-│   └── src/
-│       ├── api/
-│       ├── components/
-│       ├── pages/
-│       ├── App.js
-│       └── index.js
-├── nginx/
-│   └── nginx.conf            # Nginx configuration
-├── certbot/
-│   └── ...                   # Let's Encrypt SSL certificates
-├── docker-compose.yml
-└── .env                      # Environment variables
-
 **Prerequisites**
 
 Docker and Docker Compose
@@ -94,6 +62,7 @@ A registered domain for SSL (optional for local development)
 **Clone the Repository:**
 
 git clone https://github.com/your-username/risk-management-framework.git
+
 cd risk-management-framework
 
 Configure Environment Variables:
