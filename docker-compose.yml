@@ -1,22 +1,54 @@
 version: '3.8'
 
-services: 
-backend: 
-build: ./backend 
-environment:
-- DATABASE_URL=postgresql://riskuser:riskpass@db/riskdb 
-depends_on:
-- db volumes: - ./backend:/app expose: - "8000"
+services:
+  backend:
+    build: ./backend
+    environment:
+      - DATABASE_URL=postgresql://riskuser:riskpass@db/riskdb
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    expose:
+      - "8000"
 
-frontend: 
-build: ./frontend 
-volumes: - ./frontend:/app expose: - "3000"
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+    expose:
+      - "3000"
 
-db: 
-image: postgres:13 environment: - POSTGRES_DB=riskdb - POSTGRES_USER=riskuser - POSTGRES_PASSWORD=riskpass volumes: - postgres_data:/var/lib/postgresql/data
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=riskdb
+      - POSTGRES_USER=riskuser
+      - POSTGRES_PASSWORD=riskpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-nginx: image: nginx:alpine ports: - "80:80" - "443:443" volumes: - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf - ./certbot/conf:/etc/letsencrypt - ./certbot/www:/var/www/certbot depends_on: - backend - frontend
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+      - frontend
 
-certbot: image: certbot/certbot volumes: - ./certbot/conf:/etc/letsencrypt - ./certbot/www:/var/www/certbot entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
-volumes: postgres_data:
+volumes:
+  postgres_data:
