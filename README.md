@@ -23,6 +23,7 @@ A web-based Risk Management Framework built with Django, Django REST Framework (
 
 9. Features
 ```
+```
 Risk Register: Manage risks with categories, likelihood, impact, and ownership.
 
 Control Catalog: Implement and track NIST 800-53 controls.
@@ -34,8 +35,8 @@ Dashboard: Visualize total risks, controls, and open audits.
 RBAC: Role-based access for administrators, risk managers, auditors, and viewers.
 
 Secure Deployment: Dockerized with Nginx reverse proxy and Let's Encrypt SSL.
-
-Tech Stack
+```
+**Tech Stack**
 ```
 Backend: Django 5.2.1, Django REST Framework, PostgreSQL
 
