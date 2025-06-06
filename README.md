@@ -36,7 +36,7 @@ RBAC: Role-based access for administrators, risk managers, auditors, and viewers
 Secure Deployment: Dockerized with Nginx reverse proxy and Let's Encrypt SSL.
 
 Tech Stack
-
+```
 Backend: Django 5.2.1, Django REST Framework, PostgreSQL
 
 Frontend: React 18, Tailwind CSS
@@ -46,7 +46,7 @@ Infrastructure: Docker, Nginx, Certbot (Let's Encrypt)
 Authentication: Django RBAC with custom user roles
 
 Database: PostgreSQL 17
-
+```
 **Prerequisites**
 ```
 Docker and Docker Compose
